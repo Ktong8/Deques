@@ -7,7 +7,7 @@ namespace deques {
     template <typename T>
     class CircularDeque {
     public:
-        CircularDeque() : start_{3}, end_{0}, size_{0}, container_(4) {}
+        CircularDeque() : start_{1}, end_{0}, size_{0}, container_(2) {}
         ~CircularDeque() = default;
         
         void push_front(T) noexcept;
@@ -117,6 +117,9 @@ void deques::CircularDeque<T>::pop_back() {
         end_ = container_.size() - 1;
     }
     size_--;
+    if (size_ <= container_.size() / 4) {
+        shrink_container();
+    }
 }
 
 template <typename T>
