@@ -9,8 +9,10 @@ namespace deques {
         ListDeque() : head_{nullptr}, tail_{nullptr} {}
         ~ListDeque() = default;
 
-        void push_front(T);
-        void push_back(T);
+        void push_front(T) noexcept;
+        void push_back(T) noexcept;
+        void pop_front();
+        void pop_back();
 
         T& front();
         T front() const;
@@ -46,7 +48,7 @@ namespace deques {
 }
 
 template <typename T>
-void deques::ListDeque<T>::push_front(T val) {
+void deques::ListDeque<T>::push_front(T val) noexcept {
     head_ = std::make_unique<ListNode>(val, std::move(head_));
     if (tail_) {
         head_->next_->prev_ = head_.get();
@@ -56,13 +58,24 @@ void deques::ListDeque<T>::push_front(T val) {
 }
 
 template <typename T>
-void deques::ListDeque<T>::push_back(T val) {
+void deques::ListDeque<T>::push_back(T val) noexcept {
     if (!tail_) {
         push_front(val);
         return;
     }
     tail_->next_ = std::make_unique<ListNode>(val, tail_);
     tail_ = tail_->next_.get();
+}
+
+template <typename T>
+void deques::ListDeque<T>::pop_front() {
+    head_ = std::move(head_->next_);
+}
+
+template <typename T>
+void deques::ListDeque<T>::pop_back() {
+    tail_ = tail_->prev_;
+    tail_->next_ = nullptr;
 }
 
 template <typename T>
