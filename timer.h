@@ -9,10 +9,8 @@ namespace timer {
             : start_{std::chrono::high_resolution_clock::now()}
             , name_{std::move(name)} {}
         ~ScopedTimer() {
-            std::cout << "destructing\n";
             auto end = std::chrono::high_resolution_clock::now();
             auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start_);
-            std::cout << "closing\n";
             std::cout << name_ << " took " << dur.count() << " microseconds to run\n";
         }
     private:
@@ -24,6 +22,5 @@ namespace timer {
     void timeFunction(F&& f, std::string name, Ts&&... args) {
         ScopedTimer timer{name};
         std::forward<F>(f)(std::forward<Ts>(args)...);
-        std::cout << "done\n";
     }
 }
