@@ -6,7 +6,7 @@ namespace deques {
     template <typename T>
     class ListDeque {
     public:
-        ListDeque() : head_{nullptr}, tail_{nullptr} {}
+        ListDeque() : head_{nullptr}, tail_{nullptr}, size_{0} {}
         ~ListDeque() = default;
 
         void push_front(T) noexcept;
@@ -44,17 +44,19 @@ namespace deques {
         };
         std::unique_ptr<ListNode> head_;
         ListNode* tail_;
+        int size_;
     };
 }
 
 template <typename T>
 void deques::ListDeque<T>::push_front(T val) noexcept {
     head_ = std::make_unique<ListNode>(val, std::move(head_));
-    if (tail_) {
+    if (size_) {
         head_->next_->prev_ = head_.get();
     } else {
         tail_ = head_.get();
     }
+    size_++;
 }
 
 template <typename T>
@@ -65,17 +67,35 @@ void deques::ListDeque<T>::push_back(T val) noexcept {
     }
     tail_->next_ = std::make_unique<ListNode>(val, tail_);
     tail_ = tail_->next_.get();
+    size_++;
 }
 
 template <typename T>
 void deques::ListDeque<T>::pop_front() {
+    if (!size_) {
+        throw std::invalid_argument("popping from empty deque\n");
+    }
     head_ = std::move(head_->next_);
+    if (!head_.get()) {
+        tail_ = nullptr;
+    } else {
+        head_->prev_ = nullptr;
+    }
+    size_--;
 }
 
 template <typename T>
 void deques::ListDeque<T>::pop_back() {
+    if (!size_) {
+        throw std::invalid_argument("popping from empty deque\n");
+    }
     tail_ = tail_->prev_;
-    tail_->next_ = nullptr;
+    if (tail_) {
+        tail_->next_ = nullptr;
+    } else {
+        head_ = nullptr;
+    }
+    size_--;
 }
 
 template <typename T>
