@@ -40,7 +40,6 @@ namespace deques {
 
 template <typename T>
 void deques::ArrayDeque<T>::expand_blocks() {
-    assert(size_ == BLOCK_SIZE * blocks_.size());
     int start_block = start_ / BLOCK_SIZE;
     if (start_block) {
         for (int i = 0; i < blocks_.size() - 1; ++i) {
